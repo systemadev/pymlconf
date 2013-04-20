@@ -45,6 +45,8 @@ class ConfigManager(ConfigDict):
         ConfigDict.__init__(self)
         # track filenames we've loaded
         self.__filenames = []
+        # track dirnames we've loaded
+        self.__dirnames = []
         if init_value:
             if isinstance(init_value, (list, tuple)):
                 for iv in init_value:
@@ -68,6 +70,10 @@ class ConfigManager(ConfigDict):
         """return a list of filenames used to configure"""
         return self.__filenames[:]
     
+    def list_dirs(self):
+        """return a list of directories used to configure"""
+        return self.__dirnames[:]
+        
     def load_files(self, *files):
         self._load_files(files)
 
@@ -97,6 +103,7 @@ class ConfigManager(ConfigDict):
         candidate_files = []
         for d in dirs:
             if not os.path.exists(d): continue
+            self.__dirnames.append(d)
             full_paths = (os.path.join(d, f) for f in os.listdir(d))
             conf_files = (f for f in full_paths if (os.path.isfile(f) or os.path.islink(f)) and f.endswith('.conf'))
             candidate_files.extend(sorted(conf_files))
