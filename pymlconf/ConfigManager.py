@@ -43,6 +43,8 @@ class ConfigManager(ConfigDict):
     # Operations
     def __init__(self, init_value=None, dirs=None, files=None, filename_as_namespace=True):
         ConfigDict.__init__(self)
+        # track filenames we've loaded
+        self.__filenames = []
         if init_value:
             if isinstance(init_value, (list, tuple)):
                 for iv in init_value:
@@ -61,7 +63,11 @@ class ConfigManager(ConfigDict):
             if isinstance(files, basestring):
                 files = [f.strip() for f in files.split(';')]
             self._load_files(files)
-
+    
+    def list_files(self):
+        """return a list of filenames used to configure"""
+        return self.__filenames[:]
+    
     def load_files(self, *files):
         self._load_files(files)
 
@@ -82,6 +88,7 @@ class ConfigManager(ConfigDict):
             else:
                 node = self
             node.merge(load_yaml(f))
+            self.__filenames.append(f)
 
     def load_dirs(self, dirs, filename_as_namespace=True):
         """
