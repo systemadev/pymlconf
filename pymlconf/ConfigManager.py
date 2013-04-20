@@ -89,6 +89,7 @@ class ConfigManager(ConfigDict):
         """
         candidate_files = []
         for d in dirs:
+            if not os.path.exists(d): continue
             full_paths = (os.path.join(d, f) for f in os.listdir(d))
             conf_files = (f for f in full_paths if (os.path.isfile(f) or os.path.islink(f)) and f.endswith('.conf'))
             candidate_files.extend(sorted(conf_files))
